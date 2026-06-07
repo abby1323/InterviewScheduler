@@ -43,4 +43,9 @@ public class MatchService implements MatchServiceInterface {
     public Match getMatch(Long id){
         return matchRepository.findById(id).orElseThrow(()-> new RuntimeException("No such match found"));
     }
+
+    @Override
+    public String buildMeetLink(Match match) {
+        return "https://meet.google.com/placeholder-" + match.getId();
+    }
 }

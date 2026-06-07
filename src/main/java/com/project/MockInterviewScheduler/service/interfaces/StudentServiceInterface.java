@@ -24,7 +24,8 @@ public interface StudentServiceInterface {
     AvailabilitySlot addSlot(AvailabilitySlot slot, Long userId);
     AvailabilitySlot updateSlot(AvailabilitySlot slot, Long slotId, Long userId);
     List<AvailabilitySlot> getAllAvailabilitySlotsById(Long userId);
-    boolean acceptInterview(Long  sessionId);
+    boolean acceptInterview(Long interviewSessionId, boolean isAccepted);
+
     StudentFeedback addFeedback(StudentFeedback feedback, Long interviewSessionId, Long userId);
     InterviewerFeedback getFeedbackForStudent(Long interviewSessionId);
 }

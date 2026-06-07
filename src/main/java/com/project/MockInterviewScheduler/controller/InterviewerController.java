@@ -32,8 +32,8 @@ public class InterviewerController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getInterviewerById(@PathVariable Long id){
         try{
-            List<Interviewer> interviewers = interviewerService.getAllInterviewers();
-            return ResponseEntity.ok().body(new ApiResponse("Success!",interviewers));
+            Interviewer interviewer = interviewerService.getInterviewerById(id);
+            return ResponseEntity.ok().body(new ApiResponse("Success!",interviewer));
         }catch (Exception e){
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
         }
@@ -90,7 +90,7 @@ public class InterviewerController {
     }
 
     @GetMapping("{id}/slots")
-    public ResponseEntity<?> getAllSlotsById(Long id){
+    public ResponseEntity<?> getAllSlotsById(@PathVariable Long id){
         try{
             List<AvailabilitySlot> slots = interviewerService.getAllAvailabilitySlotsByUserId(id);
             return ResponseEntity.ok().body(new ApiResponse("Success!",slots));
@@ -110,10 +110,10 @@ public class InterviewerController {
     }
 
     @PostMapping("/accept/{id}")
-    public ResponseEntity<?> acceptInterview(@PathVariable Long id){
+    public ResponseEntity<?> acceptInterview(@PathVariable Long id, @RequestParam boolean isAccepted){
         try{
-            boolean isAccepted = interviewerService.acceptInterview(id);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",isAccepted));
+            boolean isAcceptedI = interviewerService.acceptInterview(id,isAccepted);
+            return ResponseEntity.ok().body(new ApiResponse("Success!",isAcceptedI));
         }catch (Exception e){
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
         }

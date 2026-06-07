@@ -29,4 +29,7 @@ public class Match {
     @OneToOne(mappedBy = "match_id")
     private AvailabilitySlot slot;
     private MatchStatus status;
+    private boolean hasStudentAccepted = false;
+    private boolean hasInterviewerAccepted = false;
+    private String meetLink;
 }

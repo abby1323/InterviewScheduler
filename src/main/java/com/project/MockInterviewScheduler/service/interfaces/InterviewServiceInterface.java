@@ -7,4 +7,6 @@ public interface InterviewServiceInterface {
     public InterviewSession addInterview(Match match);
 
     InterviewSession getInterview(Long interviewSessionId);
+
+    Match markComplete(Long id);
 }

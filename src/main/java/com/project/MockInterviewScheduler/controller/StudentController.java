@@ -2,6 +2,7 @@ package com.project.MockInterviewScheduler.controller;
 
 import com.project.MockInterviewScheduler.dtos.*;
 import com.project.MockInterviewScheduler.entity.*;
+import com.project.MockInterviewScheduler.service.interfaces.InterviewServiceInterface;
 import com.project.MockInterviewScheduler.service.interfaces.StudentFeedbackServiceInterface;
 import com.project.MockInterviewScheduler.service.interfaces.StudentServiceInterface;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class StudentController {
 
     private final StudentServiceInterface studentService;
     private final StudentFeedbackServiceInterface feedbackService;
-    private final InterviewSessionService interviewSessionService;
+    private final InterviewServiceInterface interviewSessionService;
 
     @GetMapping("{id}")
     public ResponseEntity<?> getStudentById(@PathVariable Long id){
@@ -102,7 +103,7 @@ public class StudentController {
     }
 
     @GetMapping("{id}/slots")
-    public ResponseEntity<?> getAllSlotsById(Long id){
+    public ResponseEntity<?> getAllSlotsById(@PathVariable Long id){
         try{
             List<AvailabilitySlot> slots = studentService.getAllAvailabilitySlotsById(id);
             return ResponseEntity.ok().body(new ApiResponse("Success!",slots));
@@ -122,9 +123,9 @@ public class StudentController {
     }
 
     @PostMapping("/accept/{id}")
-    public ResponseEntity<?> acceptInterview(@PathVariable Long id){
+    public ResponseEntity<?> acceptInterview(@PathVariable Long id, @RequestParam boolean isApproved){
         try{
-            boolean isAccepted = studentService.acceptInterview(id);
+            boolean isAccepted = studentService.acceptInterview(id,isApproved);
             return ResponseEntity.ok().body(new ApiResponse("Success!",isAccepted));
         }catch (Exception e){
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));

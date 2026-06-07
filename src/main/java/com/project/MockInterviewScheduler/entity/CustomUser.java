@@ -16,6 +16,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
 public class CustomUser implements UserDetails {
 
     @Id
@@ -24,19 +25,19 @@ public class CustomUser implements UserDetails {
     private String email;
     private String password;
 
-    @Enumerated(value = EnumType.STRING)
-    private Role role;
+//    @Enumerated(value = EnumType.STRING)
+//    private Role role;
 
     @OneToMany(mappedBy = "user_id")
     private List<AvailabilitySlot> slot;
 
-    @OneToMany(mappedBy = "user_id")
+    @OneToMany(mappedBy = "user_id", cascade = CascadeType.ALL)
     private List<Expertise> expertise;
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of();
     }
 
     @Override

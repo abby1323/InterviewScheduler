@@ -12,4 +12,6 @@ public interface MatchServiceInterface {
     Match addNoMatch(Student student);
 
     Match getMatch(Long id);
+
+    String buildMeetLink(Match match);
 }

@@ -14,9 +14,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Student extends CustomUser{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String name;
     private String college;
     // compared while matching

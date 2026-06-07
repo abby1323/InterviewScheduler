@@ -16,18 +16,14 @@ import java.util.List;
 @NoArgsConstructor
 public class Interviewer extends CustomUser{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String name;
     private String company;
     // compared while matching
     private String broadExpertiseBranch;
     private double experienceInYears;
-    // compared while matching
-    private List<String> experienceDomains;
     // computed from feedback
     private double overallRating;
+    private int totalReviews;
     // approved by admin
     @Enumerated(value = EnumType.STRING)
     private InterviewerStatus status;

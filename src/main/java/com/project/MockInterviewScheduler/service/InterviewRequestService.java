@@ -28,7 +28,7 @@ public class InterviewRequestService implements InterviewRequestServiceInterface
     public InterviewRequest deleteInterviewRequest(Long id) {
         InterviewRequest request = getInterviewRequestByUserId(id);
         request.setStatus(InterviewRequestStatus.CANCELLED);
-        return null;
+        return interviewRequestRepository.save(request);
     }
 
     @Override
@@ -38,10 +38,7 @@ public class InterviewRequestService implements InterviewRequestServiceInterface
 
     @Override
     public List<InterviewRequest> getAllPendingRequests() {
-        return interviewRequestRepository.findAll()
-                .stream()
-                .filter(request -> InterviewRequestStatus.PENDING.equals(request.getStatus()))
-                .toList();
+        return interviewRequestRepository.findByStatus(InterviewRequestStatus.PENDING);
     }
 
     @Override

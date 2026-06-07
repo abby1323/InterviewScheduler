@@ -2,6 +2,7 @@ package com.project.MockInterviewScheduler.service;
 
 
 import com.project.MockInterviewScheduler.entity.*;
+import com.project.MockInterviewScheduler.repository.MatchRepository;
 import com.project.MockInterviewScheduler.repository.StudentRepository;
 import com.project.MockInterviewScheduler.service.interfaces.*;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class StudentService implements StudentServiceInterface {
     private final SlotServiceInterface slotService;
     private final StudentFeedbackServiceInterface studentFeedbackService;
     private final InterviewerFeedbackServiceInterface interviewerFeedbackService;
+    private final MatchRepository matchRepository;
 
     @Override
     public Student addStudent(Student student) {
@@ -37,7 +39,7 @@ public class StudentService implements StudentServiceInterface {
         newStudent.setBranch(student.getBranch());
         newStudent.setCollege(student.getCollege());
         newStudent.setTargetRole(student.getTargetRole());
-        return newStudent;
+        return studentRepository.save(newStudent);
     }
 
     @Override
@@ -81,8 +83,11 @@ public class StudentService implements StudentServiceInterface {
     }
 
     @Override
-    public boolean acceptInterview(Long interviewSessionId) {
-        return false;
+    public boolean acceptInterview(Long matchId, boolean isAccepted) {
+        Match match = matchRepository.findById(matchId).orElseThrow();
+        match.setHasStudentAccepted(true);
+        matchRepository.save(match);
+        return isAccepted;
     }
 
     @Override
