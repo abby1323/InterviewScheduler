@@ -1,0 +1,38 @@
+
+"/api/v1"
+
+Student:
+
+GET "students/profile"  get student profile from security context
+PUT "students/profile" update student profile, get id from security context
+POST "students/requests" add request raised by student
+GET "students/requests" get request raised by student (id from sec context)
+POST "students/slots" student adds their avail slot
+GET "students/slots" student sees their avail slot
+PUT "students/interviews/accept/{sessionId}" student can accept scheduled interview
+PUT "students/interviews/cancel/{sessionId}" student can cancel scheduled interview
+POST "students/feedback/{sessionId}" student can add Feedback for interview session
+GET "students/feedback/{sessionId}" student can see the feedback for interview session
+
+Interviewer:
+
+GET "interviewers/profile"  get interviewer profile from security context
+PUT "interviewers/profile" update interviewer profile, get id from security context
+POST "interviewers/slots" interviewer adds their avail slot
+GET "interviewers/slots" interviewer sees their avail slot
+PUT "interviewers/interviews/accept/{sessionId}" interviewer can accept scheduled interview
+PUT "interviewers/interviews/cancel/{sessionId}" interviewer can cancel scheduled interview
+POST "interviewers/feedback/{sessionId}" interviewer can add Feedback for interview session
+GET "interviewers/feedback/{sessionId}" interviewer can see the feedback for interview session
+
+Admin :
+
+PUT "admins/approveInterviewer/{interviewerId}"
+PUT "admins/rejectInterviewer/{interviewerId}"
+POST "admins/match/run"
+PUT "admins/confirmInterview/{sessionId}"
+
+
+
+
+

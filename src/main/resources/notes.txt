@@ -1,0 +1,30 @@
+
+
+# One Student can make only one interview request?
+
+
+# add interviewer approval by admin
+# set availability slot status
+# decide how to trigger feedback request after interview session completed
+# create avail service instead of using repository directly
+
+1. Student registers.
+2. Student logs in.
+3. Student creates Interview Request.
+4. Student adds availability slot.
+5. Interviewer registers.
+6. Interviewer logs in.
+7. Interviewer adds availability slot.
+8. Admin registers.
+9. Admin logs in.
+10. Admin checks if any interview requests are PENDING.
+11. Admin tries to find a match for the interview request.
+12. If match found, admin creates an interview session.
+13. If match not found, interview request remains PENDING.
+14. Once interview session is created, accept/reject requests are sent to both student and interviewer.
+15. If both accept, interview status is SCHEDULED.
+16. If either rejects, interview status is CANCELLED, interview request is deleted.
+17. When interview is over, interviewer and student call an endInterview method.
+18. Both are given feedback forms to submit.
+19. Ratings are taken and added to their profiles.
+20. Interview is marked COMPLETED, Interview Request is marked as completed.
