@@ -24,6 +24,7 @@ public class InterviewSession {
     private Match match;
     private LocalDateTime scheduledAt;
     private InterviewStatus status;
+    private String meetLink;
 
     @OneToOne(mappedBy = "interview_session_id")
     private StudentFeedback studentFeedback;

@@ -20,7 +20,7 @@ public class SlotService implements SlotServiceInterface {
         slot1.setEndTime(slot.getEndTime());
         slot1.setUser(user);
         slot1.setStatus(SlotStatus.OPEN);
-        user.getSlot().add(slot);
+        user.getSlot().add(slot1);
         return slotRepository.save(slot1);
     }
 
@@ -29,7 +29,7 @@ public class SlotService implements SlotServiceInterface {
         AvailabilitySlot slot1 = getSlotById(slotId);
         slot1.setStartTime(slot.getStartTime());
         slot1.setEndTime(slot.getEndTime());
-        return slot1;
+        return slotRepository.save(slot1);
     }
 
 

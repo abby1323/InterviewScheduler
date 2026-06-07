@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -16,7 +17,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class AvailabilitySlot {
 
-    private DifficultyLevel difficultyLevel;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     @Enumerated(value = EnumType.STRING)
@@ -27,4 +30,25 @@ public class AvailabilitySlot {
     @OneToOne
     private Match match;
 
+    public boolean overlapsWith(AvailabilitySlot other){
+        if(other==null || other.getStartTime()== null || other.endTime==null)
+            return false;
+
+        return this.startTime.isBefore(other.getEndTime()) &&
+                other.getStartTime().isBefore(this.getEndTime());
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(this==o)
+            return true;
+        if(!(o instanceof AvailabilitySlot that) )
+            return false;
+        return Objects.equals(id,that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

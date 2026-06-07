@@ -4,26 +4,27 @@ package com.project.MockInterviewScheduler.controller;
 import com.project.MockInterviewScheduler.dtos.ApiResponse;
 import com.project.MockInterviewScheduler.entity.*;
 import com.project.MockInterviewScheduler.service.PlacementService;
+import com.project.MockInterviewScheduler.service.interfaces.EmailServiceInterface;
+import com.project.MockInterviewScheduler.service.interfaces.InterviewServiceInterface;
 import com.project.MockInterviewScheduler.service.interfaces.PCInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-@Service
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/placement-admin")
-public class PlacementController {
+public class PlacementController  extends CustomUser{
 
     private final PCInterface placementService;
+    private final InterviewServiceInterface interviewService;
+    private final EmailServiceInterface emailService;
 
     @GetMapping("/students/all")
     public ResponseEntity<?> getAllStudents() {
@@ -93,5 +94,17 @@ public class PlacementController {
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
         }
+    }
+
+    @PostMapping("/complete-interview/{id}")
+    public ResponseEntity<?> completeInterview(@PathVariable Long id){
+        try{
+            Match match = interviewService.markComplete(id).getSlot().getMatch();
+            emailService.sendFeedbackReminder(match);
+            return ResponseEntity.ok(new ApiResponse("Success", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
+        }
+
     }
 }

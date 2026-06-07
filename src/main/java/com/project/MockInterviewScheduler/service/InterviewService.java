@@ -21,11 +21,20 @@ public class InterviewService implements InterviewServiceInterface {
         interview.setMatch(match);
         interview.setStatus(InterviewStatus.SCHEDULED);
         interview.setScheduledAt(match.getSlot().getStartTime());
+        interview.setMeetLink(match.getMeetLink());
         return interviewSessionRepository.save(interview);
     }
+
 
     @Override
     public InterviewSession getInterview(Long interviewSessionId) {
         return interviewSessionRepository.findById(interviewSessionId).orElseThrow(()-> new RuntimeException("No such interview exists"));
+    }
+
+    @Override
+    public InterviewSession markComplete(Long id) {
+        InterviewSession interview = getInterview(id);
+        interview.setStatus(InterviewStatus.COMPLETED);
+        return interviewSessionRepository.save(interview);
     }
 }

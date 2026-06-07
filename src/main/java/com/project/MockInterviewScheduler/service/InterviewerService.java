@@ -4,6 +4,7 @@ package com.project.MockInterviewScheduler.service;
 import com.project.MockInterviewScheduler.entity.*;
 import com.project.MockInterviewScheduler.enums.InterviewerStatus;
 import com.project.MockInterviewScheduler.repository.InterviewerRepository;
+import com.project.MockInterviewScheduler.repository.MatchRepository;
 import com.project.MockInterviewScheduler.service.interfaces.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class InterviewerService implements InterviewerServiceInterface {
     private final SlotServiceInterface slotService;
     private final InterviewerFeedbackServiceInterface interviewerFeedbackService;
     private final StudentFeedbackServiceInterface studentFeedbackService;
+    private final MatchRepository matchRepository;
 
     @Override
     public Interviewer addInterviewer(Interviewer interviewer) {
@@ -36,7 +38,7 @@ public class InterviewerService implements InterviewerServiceInterface {
         newInterviewer.setCompany(interviewer.getCompany());
         newInterviewer.setName(interviewer.getName());
         newInterviewer.setExperienceInYears(interviewer.getExperienceInYears());
-        return newInterviewer;
+        return interviewerRepository.save(newInterviewer);
     }
 
     @Override
@@ -51,10 +53,7 @@ public class InterviewerService implements InterviewerServiceInterface {
 
     @Override
     public List<Interviewer> getAllPendingInterviewers(){
-        return interviewerRepository.findAll()
-                .stream()
-                .filter(interviewer -> InterviewerStatus.PENDING.equals(interviewer.getStatus()))
-                .toList();
+        return interviewerRepository.findByStatus(InterviewerStatus.PENDING);
     }
 
     @Override
@@ -88,8 +87,11 @@ public class InterviewerService implements InterviewerServiceInterface {
     }
 
     @Override
-    public boolean acceptInterview(Long sessionId) {
-        return false;
+    public boolean acceptInterview(Long matchId, boolean isAccepted) {
+        Match match = matchRepository.findById(matchId).orElseThrow();
+        match.setHasInterviewerAccepted(true);
+        matchRepository.save(match);
+        return isAccepted;
     }
 
     @Override
@@ -104,10 +106,7 @@ public class InterviewerService implements InterviewerServiceInterface {
 
     @Override
     public List<Interviewer> getAllApprovedInterviewers() {
-        return interviewerRepository.findAll()
-                .stream()
-                .filter(interviewer -> InterviewerStatus.APPROVED.equals(interviewer.getStatus()))
-                .toList();
+        return interviewerRepository.findByStatus(InterviewerStatus.APPROVED);
     }
 
 
