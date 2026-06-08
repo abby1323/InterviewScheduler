@@ -20,7 +20,7 @@ public class AppConfig {
     private final CustomUserService userService;
 
     @Bean
-    private ModelMapper modelMapper(){
+    public ModelMapper modelMapper(){
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT);
@@ -28,19 +28,19 @@ public class AppConfig {
     }
 
     @Bean
-    private PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    private AuthenticationProvider authProvider(){
+    public AuthenticationProvider authProvider(){
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
 
     @Bean
-    AuthenticationManager authManager(AuthenticationConfiguration config){
+    public AuthenticationManager authManager(AuthenticationConfiguration config){
         return config.getAuthenticationManager();
     }
 }
