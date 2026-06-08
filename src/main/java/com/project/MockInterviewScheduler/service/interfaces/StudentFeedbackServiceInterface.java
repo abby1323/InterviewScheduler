@@ -6,6 +6,6 @@ import com.project.MockInterviewScheduler.entity.StudentFeedback;
 public interface StudentFeedbackServiceInterface {
 
     StudentFeedback addFeedback(StudentFeedback feedback,Long interviewSessionId, Long userId);
-    StudentFeedback getFeedbackByInterviewId(Long interviewSessionId);
+    StudentFeedback getFeedbackByInterviewId(Long interviewSessionId,Long userId);
 
 }

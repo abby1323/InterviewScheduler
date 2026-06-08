@@ -25,6 +25,11 @@ public class CustomUser implements UserDetails {
     private String email;
     private String password;
 
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
+
+    boolean isActive;
+
     @OneToMany(mappedBy = "user_id")
     private List<AvailabilitySlot> slot;
 
@@ -64,6 +69,6 @@ public class CustomUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.isActive;
     }
 }

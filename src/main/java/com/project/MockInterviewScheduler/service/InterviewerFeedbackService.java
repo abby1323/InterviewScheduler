@@ -5,6 +5,7 @@ import com.project.MockInterviewScheduler.entity.Interviewer;
 import com.project.MockInterviewScheduler.entity.InterviewerFeedback;
 import com.project.MockInterviewScheduler.entity.StudentFeedback;
 import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
+import com.project.MockInterviewScheduler.exceptions.UnauthorizedActionException;
 import com.project.MockInterviewScheduler.repository.InterviewSessionRepository;
 import com.project.MockInterviewScheduler.repository.InterviewerFeedbackRepository;
 import com.project.MockInterviewScheduler.repository.InterviewerRepository;
@@ -22,9 +23,14 @@ public class InterviewerFeedbackService implements InterviewerFeedbackServiceInt
 
     private final InterviewerFeedbackRepository interviewerFeedbackRepository;
     private final InterviewSessionRepository interviewSessionRepository;
+
+
     @Override
-    public InterviewerFeedback getFeedbackByInterviewId(Long interviewSessionId) {
+    public InterviewerFeedback getFeedbackByInterviewId(Long interviewSessionId, Long userId) {
         InterviewSession interview = getInterviewById(interviewSessionId);
+        if(!interview.getMatch().getStudent().getId().equals(userId)){
+            throw new UnauthorizedActionException("User does not have access to this page");
+        }
         return interview.getInterviewerFeedback();
     }
 

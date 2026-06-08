@@ -5,6 +5,7 @@ import com.project.MockInterviewScheduler.entity.Interviewer;
 import com.project.MockInterviewScheduler.entity.Student;
 import com.project.MockInterviewScheduler.entity.StudentFeedback;
 import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
+import com.project.MockInterviewScheduler.exceptions.UnauthorizedActionException;
 import com.project.MockInterviewScheduler.repository.InterviewerRepository;
 import com.project.MockInterviewScheduler.repository.StudentFeedbackRepository;
 import com.project.MockInterviewScheduler.repository.StudentRepository;
@@ -58,8 +59,11 @@ public class StudentFeedbackService implements StudentFeedbackServiceInterface {
     }
 
     @Override
-    public StudentFeedback getFeedbackByInterviewId(Long interviewSessionId) {
+    public StudentFeedback getFeedbackByInterviewId(Long interviewSessionId, Long userId) {
         InterviewSession interview = interviewService.getInterview(interviewSessionId);
+        if(!interview.getMatch().getInterviewer().getId().equals(userId)){
+            throw new UnauthorizedActionException("User does not have access to this page");
+        }
         return interview.getStudentFeedback();
     }
 }

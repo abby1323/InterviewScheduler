@@ -17,8 +17,9 @@ public interface InterviewerServiceInterface {
     AvailabilitySlot addSlot(AvailabilitySlot slot, Long userId);
     AvailabilitySlot updateSLot(AvailabilitySlot slot, Long slotId, Long userId);
     List<AvailabilitySlot> getAllAvailabilitySlotsByUserId(Long userId);
-    boolean acceptInterview(Long matchId, boolean isAccepted);
+    boolean acceptInterview(CustomUser user, Long matchId, boolean isAccepted);
     InterviewerFeedback addFeedback(InterviewerFeedback feedback, Long interviewSessionId, Long userId);
-    StudentFeedback getFeedbackForInterviewer(Long interviewSessionId);
+    StudentFeedback getFeedbackForInterviewer(Long interviewSessionId, Long userId);
     List<Interviewer> getAllApprovedInterviewers();
+    void saveinterviewer(Interviewer interviewer);
 }

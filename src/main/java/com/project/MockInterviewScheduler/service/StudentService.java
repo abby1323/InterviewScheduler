@@ -3,6 +3,8 @@ package com.project.MockInterviewScheduler.service;
 
 import com.project.MockInterviewScheduler.dtos.responses.InterviewRequestResponse;
 import com.project.MockInterviewScheduler.entity.*;
+import com.project.MockInterviewScheduler.exceptions.InvalidRequestException;
+import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
 import com.project.MockInterviewScheduler.repository.MatchRepository;
 import com.project.MockInterviewScheduler.repository.StudentRepository;
 import com.project.MockInterviewScheduler.service.interfaces.*;
@@ -46,7 +48,7 @@ public class StudentService implements StudentServiceInterface {
 
     @Override
     public Student getStudentById(Long id) {
-        return studentRepository.findByUserId(id).orElseThrow(() -> new RuntimeException("No such user exists"));
+        return studentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No such user exists"));
     }
 
     @Override
@@ -56,8 +58,12 @@ public class StudentService implements StudentServiceInterface {
 
     @Override
     public void deleteStudent(Long id) {
-        studentRepository.deleteById(id);
+        Student student = getStudentById(id);
+        student.setActive(false);
+        studentRepository.save(student);
     }
+
+
 
     @Override
     public Expertise addExpertise(Expertise expertise, Long userId) {
@@ -85,11 +91,15 @@ public class StudentService implements StudentServiceInterface {
     }
 
     @Override
-    public boolean acceptInterview(Long matchId, boolean isAccepted) {
+    public boolean acceptInterview(CustomUser user, Long matchId, boolean isAccepted) {
         Match match = matchRepository.findById(matchId).orElseThrow();
-        match.setHasStudentAccepted(true);
-        matchRepository.save(match);
-        return isAccepted;
+        if(match.getStudent().getId().equals(user.getId())) {
+            match.setHasStudentAccepted(true);
+            matchRepository.save(match);
+            return true;
+        }else{
+            throw new InvalidRequestException("No such interview is scheduled for this user");
+        }
     }
 
     @Override
@@ -98,8 +108,8 @@ public class StudentService implements StudentServiceInterface {
     }
 
     @Override
-    public InterviewerFeedback getFeedbackForStudent(Long interviewSessionId) {
-        return interviewerFeedbackService.getFeedbackByInterviewId(interviewSessionId);
+    public InterviewerFeedback getFeedbackForStudent(Long interviewSessionId,Long userId) {
+        return interviewerFeedbackService.getFeedbackByInterviewId(interviewSessionId,userId);
     }
 
     @Override
@@ -108,8 +118,16 @@ public class StudentService implements StudentServiceInterface {
     }
 
     @Override
-    public void deleteInterviewRequest(Long id) {
-        interviewRequestService.deleteInterviewRequest(id);
+    public void deleteInterviewRequest(Long id, Long userId) {
+        Student student = getStudentById(userId);
+        if(student.getInterviewRequest() == null){
+            throw new ResourceNotFoundException("No such request exists");
+        }
+        if(!student.getInterviewRequest().getId().equals(id)){
+            throw new ResourceNotFoundException("No such request exists");
+        }else {
+            interviewRequestService.deleteInterviewRequest(id);
+        }
     }
 
 

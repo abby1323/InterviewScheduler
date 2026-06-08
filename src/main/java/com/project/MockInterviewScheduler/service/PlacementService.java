@@ -25,7 +25,6 @@ public class PlacementService implements PCInterface {
     private final InterviewRequestServiceInterface interviewRequestService;
     private final MatchServiceInterface matchService;
     private final InterviewServiceInterface interviewService;
-    private final InterviewerRepository interviewerRepository;
     private final EmailService emailService;
 
     private static final int SUBDOMAIN_MATCH_THRESHOLD = 3;
@@ -55,7 +54,7 @@ public class PlacementService implements PCInterface {
         }else {
             interviewer.setStatus(InterviewerStatus.REJECTED);
         }
-        interviewerRepository.save(interviewer);
+        interviewerService.saveinterviewer(interviewer);
         return isApproved;
     }
 
@@ -131,13 +130,11 @@ public class PlacementService implements PCInterface {
         if (match.getStatus().equals(MatchStatus.NOT_FOUND)) {
             throw new ResourceNotFoundException("Match has bot been found yet -- cannot create interview");
         }
-        InterviewSession interview = null;
-        if (match.isHasStudentAccepted() && match.isHasInterviewerAccepted()){
-            interview = interviewService.addInterview(match);
-            emailService.sendInterviewConfirmation(match);
-        }else {
-                throw new InvalidRequestException("Interview cannot be created right now");
-            }
-        return interview;
+        if (!match.isHasInterviewerAccepted() || !match.isHasStudentAccepted()) {
+            throw new InvalidRequestException("Interview not created - both parties should accept first");
         }
+        InterviewSession interview = interviewService.addInterview(match);
+        emailService.sendInterviewConfirmation(match);
+        return interview;
+    }
 }
