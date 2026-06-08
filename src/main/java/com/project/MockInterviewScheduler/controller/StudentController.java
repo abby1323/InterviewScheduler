@@ -1,11 +1,12 @@
 package com.project.MockInterviewScheduler.controller;
 
 import com.project.MockInterviewScheduler.dtos.*;
+import com.project.MockInterviewScheduler.dtos.requests.*;
+import com.project.MockInterviewScheduler.dtos.responses.*;
 import com.project.MockInterviewScheduler.entity.*;
-import com.project.MockInterviewScheduler.service.interfaces.InterviewServiceInterface;
-import com.project.MockInterviewScheduler.service.interfaces.StudentFeedbackServiceInterface;
 import com.project.MockInterviewScheduler.service.interfaces.StudentServiceInterface;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,34 +20,45 @@ import static org.springframework.http.HttpStatus.*;
 public class StudentController {
 
     private final StudentServiceInterface studentService;
-    private final StudentFeedbackServiceInterface feedbackService;
-    private final InterviewServiceInterface interviewSessionService;
+    private final ModelMapper mapper;
+
 
     @GetMapping("{id}")
     public ResponseEntity<?> getStudentById(@PathVariable Long id){
         try{
             Student student = studentService.getStudentById(id);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",student));
+            StudentResponse response = getStudentResponse(student);
+            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
         }catch (Exception e){
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
         }
     }
 
+    private StudentResponse getStudentResponse(Student student) {
+        return mapper.map(student,StudentResponse.class);
+    }
+
     @PostMapping("addStudent")
-    public ResponseEntity<?> addStudent(@RequestBody Student student){
+    public ResponseEntity<?> addStudent(@RequestBody StudentRequest student){
         try{
-            Student newStudent = studentService.addStudent(student);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",newStudent));
+            Student newStudent = studentService.addStudent(getStudentEntity(student));
+            StudentResponse response = getStudentResponse(newStudent);
+            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
         }catch (Exception e){
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
         }
     }
 
+    private Student getStudentEntity(StudentRequest student) {
+        return mapper.map(student,Student.class);
+    }
+
     @PutMapping("updateStudent/{id}")
-    public ResponseEntity<?> updateStudent(@RequestBody Student student, Long id){
+    public ResponseEntity<?> updateStudent(@RequestBody StudentRequest student, Long id){
         try{
-            Student updatedStudent = studentService.updateStudent(student,id);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",updatedStudent));
+            Student updatedStudent = studentService.updateStudent(getStudentEntity(student),id);
+            StudentResponse response = getStudentResponse(updatedStudent);
+            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
         }catch (Exception e){
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
         }
@@ -56,7 +68,9 @@ public class StudentController {
     public ResponseEntity<?> getAllStudents(){
         try{
             List<Student> students = studentService.getAllStudents();
-            return ResponseEntity.ok().body(new ApiResponse("Success!",students));
+            List<StudentResponse> responses = students.stream()
+                    .map(this::getStudentResponse).toList();
+            return ResponseEntity.ok().body(new ApiResponse("Success!",responses));
         }catch (Exception e){
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
         }
@@ -73,50 +87,65 @@ public class StudentController {
     }
 
     @PostMapping("/{id}/expertise")
-    public ResponseEntity<?> addExpertise(@RequestBody Expertise expertise,@PathVariable Long id){
+    public ResponseEntity<?> addExpertise(@RequestBody ExpertiseRequest expertise,@PathVariable Long id){
         try{
-            Expertise newExpertise = studentService.addExpertise(expertise,id);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",newExpertise));
+            Expertise newExpertise = studentService.addExpertise(getExpertiseEntity(expertise),id);
+            ExpertiseResponse response = getExpertiseResponse(newExpertise);
+            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
         }catch (Exception e){
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
         }
+    }
+
+    private ExpertiseResponse getExpertiseResponse(Expertise expertise) {
+        return mapper.map(expertise,ExpertiseResponse.class);
     }
 
     @GetMapping("{id}/expertises")
     public ResponseEntity<?> getAllExpertiseById(@PathVariable Long id){
         try{
         List<Expertise> expertiseList = studentService.getAllExpertiseById(id);
-        return ResponseEntity.ok().body(new ApiResponse("Success!",expertiseList));
+        List<ExpertiseResponse> responses = expertiseList.stream()
+                .map(this::getExpertiseResponse).toList();
+        return ResponseEntity.ok().body(new ApiResponse("Success!",responses));
         }catch (Exception e){
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
         }
     }
 
     @PostMapping("{id}/addSlot")
-    public ResponseEntity<?> addSlot(@PathVariable Long id, @RequestBody AvailabilitySlot slot){
+    public ResponseEntity<?> addSlot(@PathVariable Long id, @RequestBody SlotRequest slot){
         try{
-        AvailabilitySlot newSlot = studentService.addSlot(slot,id);
-        return ResponseEntity.ok().body(new ApiResponse("Success!",newSlot));
+        AvailabilitySlot newSlot = studentService.addSlot(getSlotEntity(slot),id);
+            SlotResponse response = getSlotResponse(newSlot);
+        return ResponseEntity.ok().body(new ApiResponse("Success!",response));
         }catch (Exception e){
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
         }
+    }
+
+    private SlotResponse getSlotResponse(AvailabilitySlot newSlot) {
+        return mapper.map(newSlot,SlotResponse.class);
     }
 
     @GetMapping("{id}/slots")
     public ResponseEntity<?> getAllSlotsById(@PathVariable Long id){
         try{
             List<AvailabilitySlot> slots = studentService.getAllAvailabilitySlotsById(id);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",slots));
+            List<SlotResponse> responses = slots.stream()
+                    .map(this::getSlotResponse).toList();
+            return ResponseEntity.ok().body(new ApiResponse("Success!",responses));
         }catch (Exception e){
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
         }
     }
 
     @PutMapping("{userId}/updateSlots/{slotId}")
-    public ResponseEntity<?> updateSlot(@PathVariable Long userId, @PathVariable Long slotId,@RequestBody AvailabilitySlot slot){
+    public ResponseEntity<?> updateSlot(@PathVariable Long userId, @PathVariable Long slotId,@RequestBody SlotRequest slot){
         try{
-        AvailabilitySlot updatedSlot = studentService.updateSlot(slot,slotId,userId);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",updatedSlot));
+        AvailabilitySlot updatedSlot = studentService.updateSlot(getSlotEntity(slot),slotId,userId);
+        SlotResponse response = getSlotResponse(updatedSlot);
+            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
         }catch (Exception e){
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
         }
@@ -133,23 +162,44 @@ public class StudentController {
     }
 
     @PostMapping("{userId}/feedback/{sessionId}")
-    public ResponseEntity<?> addFeedback(@PathVariable Long userId, @PathVariable Long sessionId, @RequestBody StudentFeedback feedback){
+    public ResponseEntity<?> addFeedback(@PathVariable Long userId, @PathVariable Long sessionId, @RequestBody StudentFeedbackRequest feedback){
         try{
-            StudentFeedback newFeedback = studentService.addFeedback(feedback,sessionId,userId);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",newFeedback));
+            StudentFeedback newFeedback = studentService.addFeedback(getIFeedbackEntity(feedback),sessionId,userId);
+            StudentFeedbackResponse response = getStudentFeedbackResponse(newFeedback);
+            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
         }catch (Exception e){
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
         }
+    }
+
+    private StudentFeedback getIFeedbackEntity(StudentFeedbackRequest request) {
+        return mapper.map(request,StudentFeedback.class);
+    }
+    private StudentFeedbackResponse getStudentFeedbackResponse(StudentFeedback newFeedback) {
+        return mapper.map(newFeedback,StudentFeedbackResponse.class);
     }
 
     @GetMapping("/feedback/{id}")
     public ResponseEntity<?> getFeedbackForStudent(@PathVariable Long id){
         try{
             InterviewerFeedback feedback = studentService.getFeedbackForStudent(id);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",feedback));
+            InterviewerFeedbackResponse response = getInterviewerFeedbackResponse(feedback);
+            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
         }catch (Exception e){
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
         }
+    }
+
+    private InterviewerFeedbackResponse getInterviewerFeedbackResponse(InterviewerFeedback feedback) {
+        return mapper.map(feedback,InterviewerFeedbackResponse.class);
+    }
+
+    private AvailabilitySlot getSlotEntity(SlotRequest request) {
+        return mapper.map(request,AvailabilitySlot.class);
+    }
+
+    private Expertise getExpertiseEntity(ExpertiseRequest request) {
+        return mapper.map(request,Expertise.class);
     }
 
 
