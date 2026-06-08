@@ -1,6 +1,7 @@
 package com.project.MockInterviewScheduler.service.interfaces;
 
 import com.project.MockInterviewScheduler.entity.InterviewSession;
+import com.project.MockInterviewScheduler.entity.Interviewer;
 import com.project.MockInterviewScheduler.entity.Match;
 
 public interface InterviewServiceInterface {
@@ -9,4 +10,5 @@ public interface InterviewServiceInterface {
     InterviewSession getInterview(Long interviewSessionId);
 
     Match markComplete(Long id);
+
 }

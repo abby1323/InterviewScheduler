@@ -3,6 +3,7 @@ package com.project.MockInterviewScheduler.service;
 
 import com.project.MockInterviewScheduler.entity.*;
 import com.project.MockInterviewScheduler.enums.InterviewerStatus;
+import com.project.MockInterviewScheduler.exceptions.InvalidRequestException;
 import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
 import com.project.MockInterviewScheduler.repository.InterviewerRepository;
 import com.project.MockInterviewScheduler.repository.MatchRepository;
@@ -59,7 +60,9 @@ public class InterviewerService implements InterviewerServiceInterface {
 
     @Override
     public void deleteInterviewer(Long id) {
-        interviewerRepository.deleteById(id);
+        Interviewer interviewer = getInterviewerById(id);
+        interviewer.setActive(false);
+        interviewerRepository.save(interviewer);
     }
 
     @Override
@@ -88,11 +91,15 @@ public class InterviewerService implements InterviewerServiceInterface {
     }
 
     @Override
-    public boolean acceptInterview(Long matchId, boolean isAccepted) {
+    public boolean acceptInterview(CustomUser user,Long matchId, boolean isAccepted) {
         Match match = matchRepository.findById(matchId).orElseThrow();
-        match.setHasInterviewerAccepted(true);
-        matchRepository.save(match);
-        return isAccepted;
+        if(match.getInterviewer().getId().equals(user.getId())) {
+            match.setHasInterviewerAccepted(true);
+            matchRepository.save(match);
+            return isAccepted;
+        }else {
+            throw new InvalidRequestException("No such interview scheduled for this user");
+        }
     }
 
     @Override
@@ -101,13 +108,18 @@ public class InterviewerService implements InterviewerServiceInterface {
     }
 
     @Override
-    public StudentFeedback getFeedbackForInterviewer(Long interviewSessionId) {
-        return studentFeedbackService.getFeedbackByInterviewId(interviewSessionId);
+    public StudentFeedback getFeedbackForInterviewer(Long interviewSessionId, Long userId) {
+        return studentFeedbackService.getFeedbackByInterviewId(interviewSessionId,userId);
     }
 
     @Override
     public List<Interviewer> getAllApprovedInterviewers() {
         return interviewerRepository.findByStatus(InterviewerStatus.APPROVED);
+    }
+
+    @Override
+    public void saveinterviewer(Interviewer interviewer) {
+        interviewerRepository.save(interviewer);
     }
 
 

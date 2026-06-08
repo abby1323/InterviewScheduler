@@ -1,8 +1,10 @@
 package com.project.MockInterviewScheduler.service;
 
 import com.project.MockInterviewScheduler.entity.InterviewSession;
+import com.project.MockInterviewScheduler.entity.Interviewer;
 import com.project.MockInterviewScheduler.entity.Match;
 import com.project.MockInterviewScheduler.enums.InterviewStatus;
+import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
 import com.project.MockInterviewScheduler.repository.InterviewSessionRepository;
 import com.project.MockInterviewScheduler.service.interfaces.InterviewServiceInterface;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +30,7 @@ public class InterviewService implements InterviewServiceInterface {
 
     @Override
     public InterviewSession getInterview(Long interviewSessionId) {
-        return interviewSessionRepository.findById(interviewSessionId).orElseThrow(()-> new RuntimeException("No such interview exists"));
+        return interviewSessionRepository.findById(interviewSessionId).orElseThrow(()-> new ResourceNotFoundException("No such interview exists"));
     }
 
     @Override
@@ -38,4 +40,5 @@ public class InterviewService implements InterviewServiceInterface {
          interviewSessionRepository.save(interview);
          return interview.getMatch();
     }
+
 }

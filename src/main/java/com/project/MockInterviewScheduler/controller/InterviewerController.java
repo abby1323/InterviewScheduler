@@ -10,6 +10,7 @@ import com.project.MockInterviewScheduler.service.interfaces.InterviewerServiceI
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,12 +23,13 @@ public class InterviewerController {
     private final InterviewerServiceInterface interviewerService;
     private final ModelMapper mapper;
 
-    @PostMapping("/")
-    public ResponseEntity<?> addInterviewer(@RequestBody InterviewerRequest interviewerRequest) {
-        Interviewer newInterviewer = interviewerService.addInterviewer(getInterviewerEntity(interviewerRequest));
-        InterviewResponse response = getInterviewerResponse(newInterviewer);
-        return ResponseEntity.ok().body(new ApiResponse("Success!", response));
-    }
+    // handled by AuthController
+//    @PostMapping("/")
+//    public ResponseEntity<?> addInterviewer(@RequestBody InterviewerRequest interviewerRequest) {
+//        Interviewer newInterviewer = interviewerService.addInterviewer(getInterviewerEntity(interviewerRequest));
+//        InterviewResponse response = getInterviewerResponse(newInterviewer);
+//        return ResponseEntity.ok().body(new ApiResponse("Success!", response));
+//    }
 
     private Interviewer getInterviewerEntity(InterviewerRequest interviewerRequest) {
         return mapper.map(interviewerRequest, Interviewer.class);
@@ -37,29 +39,29 @@ public class InterviewerController {
         return mapper.map(newInterviewer, InterviewResponse.class);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getInterviewerById(@PathVariable Long id) {
-        Interviewer interviewer = interviewerService.getInterviewerById(id);
+    @GetMapping("/interviewer")
+    public ResponseEntity<?> getInterviewerById(@AuthenticationPrincipal CustomUser user) {
+        Interviewer interviewer = interviewerService.getInterviewerById(user.getId());
         InterviewResponse response = getInterviewerResponse(interviewer);
         return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
 
-    @PutMapping("/{id}/")
-    public ResponseEntity<?> updateInterviewer(@PathVariable Long id, @RequestBody InterviewerRequest request) {
-        Interviewer updatedInterviewer = interviewerService.updateInterviewer(getInterviewerEntity(request), id);
+    @PutMapping("/update/")
+    public ResponseEntity<?> updateInterviewer(@AuthenticationPrincipal CustomUser user, @RequestBody InterviewerRequest request) {
+        Interviewer updatedInterviewer = interviewerService.updateInterviewer(getInterviewerEntity(request), user.getId());
         InterviewResponse response = getInterviewerResponse(updatedInterviewer);
         return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteInterviewer(@PathVariable Long id) {
-        interviewerService.deleteInterviewer(id);
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteInterviewer(@AuthenticationPrincipal CustomUser user) {
+        interviewerService.deleteInterviewer(user.getId());
         return ResponseEntity.ok().body(new ApiResponse("Success!", null));
     }
 
-    @PostMapping("/{id}/expertise")
-    public ResponseEntity<?> addExpertise(@RequestBody ExpertiseRequest request, @PathVariable Long id) {
-        Expertise newExpertise = interviewerService.addExpertise(getExpertiseEntity(request), id);
+    @PostMapping("/expertise")
+    public ResponseEntity<?> addExpertise(@RequestBody ExpertiseRequest request, @AuthenticationPrincipal CustomUser user) {
+        Expertise newExpertise = interviewerService.addExpertise(getExpertiseEntity(request), user.getId());
         ExpertiseResponse response = getExpertiseResponse(newExpertise);
         return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
@@ -72,17 +74,17 @@ public class InterviewerController {
         return mapper.map(newExpertise, ExpertiseResponse.class);
     }
 
-    @GetMapping("{id}/expertises")
-    public ResponseEntity<?> getAllExpertiseById(@PathVariable Long id) {
-        List<Expertise> expertiseList = interviewerService.getAllExpertiseByUserId(id);
+    @GetMapping("expertises/all")
+    public ResponseEntity<?> getAllExpertiseById(@AuthenticationPrincipal CustomUser user) {
+        List<Expertise> expertiseList = interviewerService.getAllExpertiseByUserId(user.getId());
         List<ExpertiseResponse> responses = expertiseList.stream()
                 .map(this::getExpertiseResponse).toList();
         return ResponseEntity.ok().body(new ApiResponse("Success!", responses));
     }
 
-    @PostMapping("{id}/addSlot")
-    public ResponseEntity<?> addSlot(@PathVariable Long id, @RequestBody SlotRequest request) {
-        AvailabilitySlot newSlot = interviewerService.addSlot(getSlotEntity(request), id);
+    @PostMapping("/addSlot")
+    public ResponseEntity<?> addSlot(@AuthenticationPrincipal CustomUser user, @RequestBody SlotRequest request) {
+        AvailabilitySlot newSlot = interviewerService.addSlot(getSlotEntity(request), user.getId());
         SlotResponse response = getSlotResponse(newSlot);
         return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
@@ -95,30 +97,30 @@ public class InterviewerController {
         return mapper.map(newSlot, SlotResponse.class);
     }
 
-    @GetMapping("{id}/slots")
-    public ResponseEntity<?> getAllSlotsById(@PathVariable Long id) {
-        List<AvailabilitySlot> slots = interviewerService.getAllAvailabilitySlotsByUserId(id);
+    @GetMapping("/slots")
+    public ResponseEntity<?> getAllSlotsById(@AuthenticationPrincipal CustomUser user) {
+        List<AvailabilitySlot> slots = interviewerService.getAllAvailabilitySlotsByUserId(user.getId());
         List<SlotResponse> slotResponses = slots.stream()
                 .map(this::getSlotResponse).toList();
         return ResponseEntity.ok().body(new ApiResponse("Success!", slotResponses));
     }
 
-    @PutMapping("{userId}/updateSlots/{slotId}")
-    public ResponseEntity<?> updateSlot(@PathVariable Long userId, @PathVariable Long slotId, @RequestBody SlotRequest request) {
-        AvailabilitySlot updatedSlot = interviewerService.updateSLot(getSlotEntity(request), slotId, userId);
+    @PutMapping("updateSlot/{slotId}")
+    public ResponseEntity<?> updateSlot(@AuthenticationPrincipal CustomUser user, @PathVariable Long slotId, @RequestBody SlotRequest request) {
+        AvailabilitySlot updatedSlot = interviewerService.updateSLot(getSlotEntity(request), slotId, user.getId());
         SlotResponse response = getSlotResponse(updatedSlot);
         return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
 
     @PostMapping("/accept/{id}")
-    public ResponseEntity<?> acceptInterview(@PathVariable Long id, @RequestParam boolean isAccepted) {
-        boolean isAcceptedI = interviewerService.acceptInterview(id, isAccepted);
+    public ResponseEntity<?> acceptInterview(@PathVariable Long id, @RequestParam boolean isAccepted, @AuthenticationPrincipal CustomUser user) {
+        boolean isAcceptedI = interviewerService.acceptInterview(user,id,isAccepted);
         return ResponseEntity.ok().body(new ApiResponse("Success!", isAcceptedI));
     }
 
-    @PostMapping("{userId}/feedback/{sessionId}")
-    public ResponseEntity<?> addFeedback(@PathVariable Long userId, @PathVariable Long sessionId, @RequestBody InterviewerFeedbackRequest request) {
-        InterviewerFeedback newFeedback = interviewerService.addFeedback(getIFeedbackEntity(request), sessionId, userId);
+    @PostMapping("feedback/{sessionId}")
+    public ResponseEntity<?> addFeedback(@AuthenticationPrincipal CustomUser user, @PathVariable Long sessionId, @RequestBody InterviewerFeedbackRequest request) {
+        InterviewerFeedback newFeedback = interviewerService.addFeedback(getIFeedbackEntity(request), sessionId, user.getId());
         InterviewerFeedbackResponse response = getInterviewerFeedbackResponse(newFeedback);
         return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
@@ -127,9 +129,9 @@ public class InterviewerController {
         return mapper.map(request, InterviewerFeedback.class);
     }
 
-    @GetMapping("/feedback/{id}")
-    public ResponseEntity<?> getFeedbackForInterviewer(@PathVariable Long id) {
-        StudentFeedback feedback = interviewerService.getFeedbackForInterviewer(id);
+    @GetMapping("/feedback/{interviewId}")
+    public ResponseEntity<?> getFeedbackForInterviewer(@PathVariable Long interviewId,@AuthenticationPrincipal CustomUser user) {
+        StudentFeedback feedback = interviewerService.getFeedbackForInterviewer(interviewId,user.getId());
         StudentFeedbackResponse response = getStudentFeedbackResponse(feedback);
         return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }

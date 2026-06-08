@@ -27,6 +27,7 @@ public class MatchService implements MatchServiceInterface {
         match1.setCreatedAt(LocalDateTime.now());
         match1.setSlot(slot);
         match1.setStatus(MatchStatus.FOUND);
+        match1.setMeetLink(buildMeetLink(match1));
         return matchRepository.save(match1);
     }
 
