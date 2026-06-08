@@ -5,6 +5,7 @@ import com.project.MockInterviewScheduler.entity.Interviewer;
 import com.project.MockInterviewScheduler.entity.Match;
 import com.project.MockInterviewScheduler.entity.Student;
 import com.project.MockInterviewScheduler.enums.MatchStatus;
+import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
 import com.project.MockInterviewScheduler.repository.MatchRepository;
 import com.project.MockInterviewScheduler.service.interfaces.MatchServiceInterface;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class MatchService implements MatchServiceInterface {
 
     @Override
     public Match getMatch(Long id){
-        return matchRepository.findById(id).orElseThrow(()-> new RuntimeException("No such match found"));
+        return matchRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("No such match found"));
     }
 
     @Override

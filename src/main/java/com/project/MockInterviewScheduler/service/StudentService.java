@@ -1,6 +1,7 @@
 package com.project.MockInterviewScheduler.service;
 
 
+import com.project.MockInterviewScheduler.dtos.responses.InterviewRequestResponse;
 import com.project.MockInterviewScheduler.entity.*;
 import com.project.MockInterviewScheduler.repository.MatchRepository;
 import com.project.MockInterviewScheduler.repository.StudentRepository;
@@ -20,6 +21,7 @@ public class StudentService implements StudentServiceInterface {
     private final StudentFeedbackServiceInterface studentFeedbackService;
     private final InterviewerFeedbackServiceInterface interviewerFeedbackService;
     private final MatchRepository matchRepository;
+    private final InterviewRequestServiceInterface interviewRequestService;
 
     @Override
     public Student addStudent(Student student) {
@@ -100,6 +102,16 @@ public class StudentService implements StudentServiceInterface {
         return interviewerFeedbackService.getFeedbackByInterviewId(interviewSessionId);
     }
 
+    @Override
+    public InterviewRequest makeInterviewRequest(Long userId) {
+        return interviewRequestService.addRequest(userId);
+    }
+
+    @Override
+    public void deleteInterviewRequest(Long id) {
+        interviewRequestService.deleteInterviewRequest(id);
+    }
+
 
 //    private final StudentRepository studentRepository;
 //    private final InterviewRequestService interviewRequestService;
@@ -133,7 +145,7 @@ public class StudentService implements StudentServiceInterface {
 //    public InterviewRequestResponse createInterviewRequest(Long studentId, CreateInterviewRequest createRequest) {
 //        Student student = getStudentEntity(studentId);
 //        if(student.getInterviewRequest()!=null)
-//            throw new AlreadyExistsException("interview request already created");
+//            throw new ResourceAlreadyException("interview request already created");
 //        InterviewRequest interviewRequest = interviewRequestService.addInterviewRequest(createRequest,student);
 //        student.setInterviewRequest(interviewRequest);
 //        return convertInterviewRequestToResponse(interviewRequest);
@@ -148,7 +160,7 @@ public class StudentService implements StudentServiceInterface {
 //    public SlotResponse addAvailabilitySlot(Long id, SlotRequest slotRequest){
 //        Student student = getStudentEntity(id);
 //        if (student.getAvailabilitySlot()!=null)
-//            throw new AlreadyExistsException("Slot added already");
+//            throw new ResourceAlreadyException("Slot added already");
 //        AvailabilitySlot availabilitySlot = slotService.addStudentAvailSlot(student,slotRequest);
 //        return convertToSlotResponse(availabilitySlot);
 //    }

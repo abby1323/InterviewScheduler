@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlacementCoordinator {
+public class PlacementCoordinator extends CustomUser{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
