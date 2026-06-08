@@ -32,9 +32,10 @@ public class InterviewService implements InterviewServiceInterface {
     }
 
     @Override
-    public InterviewSession markComplete(Long id) {
+    public Match markComplete(Long id) {
         InterviewSession interview = getInterview(id);
         interview.setStatus(InterviewStatus.COMPLETED);
-        return interviewSessionRepository.save(interview);
+         interviewSessionRepository.save(interview);
+         return interview.getMatch();
     }
 }

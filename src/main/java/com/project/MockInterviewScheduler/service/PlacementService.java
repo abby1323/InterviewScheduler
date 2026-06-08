@@ -5,6 +5,8 @@ import com.project.MockInterviewScheduler.enums.InterviewStatus;
 import com.project.MockInterviewScheduler.enums.InterviewerStatus;
 import com.project.MockInterviewScheduler.enums.MatchStatus;
 import com.project.MockInterviewScheduler.enums.SlotStatus;
+import com.project.MockInterviewScheduler.exceptions.InvalidRequestException;
+import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
 import com.project.MockInterviewScheduler.repository.InterviewerRepository;
 import com.project.MockInterviewScheduler.service.interfaces.*;
 import lombok.RequiredArgsConstructor;
@@ -127,14 +129,14 @@ public class PlacementService implements PCInterface {
     public InterviewSession createInterview(Long id) {
         Match match = matchService.getMatch(id);
         if (match.getStatus().equals(MatchStatus.NOT_FOUND)) {
-            throw new RuntimeException("Match has bot been found yet -- cannot create interview");
+            throw new ResourceNotFoundException("Match has bot been found yet -- cannot create interview");
         }
         InterviewSession interview = null;
         if (match.isHasStudentAccepted() && match.isHasInterviewerAccepted()){
             interview = interviewService.addInterview(match);
             emailService.sendInterviewConfirmation(match);
         }else {
-                throw new RuntimeException("Interview cannot be created right now");
+                throw new InvalidRequestException("Interview cannot be created right now");
             }
         return interview;
         }

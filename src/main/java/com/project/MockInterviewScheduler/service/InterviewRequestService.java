@@ -2,6 +2,7 @@ package com.project.MockInterviewScheduler.service;
 
 import com.project.MockInterviewScheduler.entity.InterviewRequest;
 import com.project.MockInterviewScheduler.enums.InterviewRequestStatus;
+import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
 import com.project.MockInterviewScheduler.repository.InterviewRequestRepository;
 import com.project.MockInterviewScheduler.service.interfaces.InterviewRequestServiceInterface;
 import com.project.MockInterviewScheduler.service.interfaces.StudentServiceInterface;
@@ -16,6 +17,7 @@ public class InterviewRequestService implements InterviewRequestServiceInterface
 
     private final InterviewRequestRepository interviewRequestRepository;
     private final StudentServiceInterface studentService;
+
     @Override
     public InterviewRequest addRequest(Long id) {
         InterviewRequest request = new InterviewRequest();
@@ -33,7 +35,7 @@ public class InterviewRequestService implements InterviewRequestServiceInterface
 
     @Override
     public InterviewRequest getInterviewRequestByUserId(Long userId) {
-        return interviewRequestRepository.findByStudentId(userId).orElseThrow(() -> new RuntimeException("No such user exists"));
+        return interviewRequestRepository.findByStudentId(userId).orElseThrow(() -> new ResourceNotFoundException("No such user exists"));
     }
 
     @Override
@@ -43,7 +45,7 @@ public class InterviewRequestService implements InterviewRequestServiceInterface
 
     @Override
     public InterviewRequest getRequestById(Long id) {
-        return interviewRequestRepository.findById(id).orElseThrow(() -> new RuntimeException("No such request exists"));
+        return interviewRequestRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No such request exists"));
     }
 
 

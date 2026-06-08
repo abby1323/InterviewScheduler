@@ -1,5 +1,6 @@
 package com.project.MockInterviewScheduler.service.interfaces;
 
+import com.project.MockInterviewScheduler.dtos.responses.InterviewRequestResponse;
 import com.project.MockInterviewScheduler.entity.*;
 
 import java.util.List;
@@ -28,4 +29,8 @@ public interface StudentServiceInterface {
 
     StudentFeedback addFeedback(StudentFeedback feedback, Long interviewSessionId, Long userId);
     InterviewerFeedback getFeedbackForStudent(Long interviewSessionId);
+
+    InterviewRequest makeInterviewRequest(Long userId);
+
+    void deleteInterviewRequest(Long id);
 }

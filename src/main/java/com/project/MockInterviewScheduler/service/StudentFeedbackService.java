@@ -4,6 +4,7 @@ import com.project.MockInterviewScheduler.entity.InterviewSession;
 import com.project.MockInterviewScheduler.entity.Interviewer;
 import com.project.MockInterviewScheduler.entity.Student;
 import com.project.MockInterviewScheduler.entity.StudentFeedback;
+import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
 import com.project.MockInterviewScheduler.repository.InterviewerRepository;
 import com.project.MockInterviewScheduler.repository.StudentFeedbackRepository;
 import com.project.MockInterviewScheduler.repository.StudentRepository;
@@ -53,7 +54,7 @@ public class StudentFeedbackService implements StudentFeedbackServiceInterface {
     }
 
     private Student getStudentById(Long userId) {
-        return studentRepository.findById(userId).orElseThrow(()-> new RuntimeException("No such student exists"));
+        return studentRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("No such student exists"));
     }
 
     @Override

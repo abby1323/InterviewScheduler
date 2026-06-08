@@ -1,6 +1,5 @@
 package com.project.MockInterviewScheduler.controller;
 
-import com.project.MockInterviewScheduler.dtos.*;
 import com.project.MockInterviewScheduler.dtos.requests.ExpertiseRequest;
 import com.project.MockInterviewScheduler.dtos.requests.InterviewerFeedbackRequest;
 import com.project.MockInterviewScheduler.dtos.requests.InterviewerRequest;
@@ -15,9 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/interviewers")
@@ -27,174 +23,124 @@ public class InterviewerController {
     private final ModelMapper mapper;
 
     @PostMapping("/")
-    public ResponseEntity<?> addInterviewer(@RequestBody InterviewerRequest interviewerRequest){
-        try{
+    public ResponseEntity<?> addInterviewer(@RequestBody InterviewerRequest interviewerRequest) {
         Interviewer newInterviewer = interviewerService.addInterviewer(getInterviewerEntity(interviewerRequest));
-            InterviewResponse response = getInterviewerResponse(newInterviewer);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
-        }
+        InterviewResponse response = getInterviewerResponse(newInterviewer);
+        return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
 
     private Interviewer getInterviewerEntity(InterviewerRequest interviewerRequest) {
-        return mapper.map(interviewerRequest,Interviewer.class);
+        return mapper.map(interviewerRequest, Interviewer.class);
     }
 
     private InterviewResponse getInterviewerResponse(Interviewer newInterviewer) {
-        return mapper.map(newInterviewer,InterviewResponse.class);
+        return mapper.map(newInterviewer, InterviewResponse.class);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getInterviewerById(@PathVariable Long id){
-        try{
-            Interviewer interviewer = interviewerService.getInterviewerById(id);
-            InterviewResponse response = getInterviewerResponse(interviewer);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
-        }catch (Exception e){
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
-        }
+    public ResponseEntity<?> getInterviewerById(@PathVariable Long id) {
+        Interviewer interviewer = interviewerService.getInterviewerById(id);
+        InterviewResponse response = getInterviewerResponse(interviewer);
+        return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
 
     @PutMapping("/{id}/")
-    public ResponseEntity<?> updateInterviewer(@PathVariable Long id, @RequestBody InterviewerRequest request){
-        try{
-            Interviewer updatedInterviewer = interviewerService.updateInterviewer(getInterviewerEntity(request),id);
-            InterviewResponse response = getInterviewerResponse(updatedInterviewer);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
-        }
+    public ResponseEntity<?> updateInterviewer(@PathVariable Long id, @RequestBody InterviewerRequest request) {
+        Interviewer updatedInterviewer = interviewerService.updateInterviewer(getInterviewerEntity(request), id);
+        InterviewResponse response = getInterviewerResponse(updatedInterviewer);
+        return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteInterviewer(@PathVariable Long id){
-        try{
-            interviewerService.deleteInterviewer(id);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",null));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
-        }
+    public ResponseEntity<?> deleteInterviewer(@PathVariable Long id) {
+        interviewerService.deleteInterviewer(id);
+        return ResponseEntity.ok().body(new ApiResponse("Success!", null));
     }
 
     @PostMapping("/{id}/expertise")
-    public ResponseEntity<?> addExpertise(@RequestBody ExpertiseRequest request, @PathVariable Long id){
-        try{
-            Expertise newExpertise = interviewerService.addExpertise(getExpertiseEntity(request),id);
-            ExpertiseResponse response = getExpertiseResponse(newExpertise);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
-        }
+    public ResponseEntity<?> addExpertise(@RequestBody ExpertiseRequest request, @PathVariable Long id) {
+        Expertise newExpertise = interviewerService.addExpertise(getExpertiseEntity(request), id);
+        ExpertiseResponse response = getExpertiseResponse(newExpertise);
+        return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
 
     private Expertise getExpertiseEntity(ExpertiseRequest request) {
-        return mapper.map(request,Expertise.class);
+        return mapper.map(request, Expertise.class);
     }
 
     private ExpertiseResponse getExpertiseResponse(Expertise newExpertise) {
-        return mapper.map(newExpertise,ExpertiseResponse.class);
+        return mapper.map(newExpertise, ExpertiseResponse.class);
     }
 
     @GetMapping("{id}/expertises")
-    public ResponseEntity<?> getAllExpertiseById(@PathVariable Long id){
-        try{
-            List<Expertise> expertiseList = interviewerService.getAllExpertiseByUserId(id);
-            List<ExpertiseResponse> responses = expertiseList.stream()
-                    .map(this::getExpertiseResponse).toList();
-            return ResponseEntity.ok().body(new ApiResponse("Success!",responses));
-        }catch (Exception e){
-            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
-        }
+    public ResponseEntity<?> getAllExpertiseById(@PathVariable Long id) {
+        List<Expertise> expertiseList = interviewerService.getAllExpertiseByUserId(id);
+        List<ExpertiseResponse> responses = expertiseList.stream()
+                .map(this::getExpertiseResponse).toList();
+        return ResponseEntity.ok().body(new ApiResponse("Success!", responses));
     }
 
     @PostMapping("{id}/addSlot")
-    public ResponseEntity<?> addSlot(@PathVariable Long id, @RequestBody SlotRequest request){
-        try{
-            AvailabilitySlot newSlot = interviewerService.addSlot(getSlotEntity(request),id);
-            SlotResponse response = getSlotResponse(newSlot);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
-        }
+    public ResponseEntity<?> addSlot(@PathVariable Long id, @RequestBody SlotRequest request) {
+        AvailabilitySlot newSlot = interviewerService.addSlot(getSlotEntity(request), id);
+        SlotResponse response = getSlotResponse(newSlot);
+        return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
 
     private AvailabilitySlot getSlotEntity(SlotRequest request) {
-        return mapper.map(request,AvailabilitySlot.class);
+        return mapper.map(request, AvailabilitySlot.class);
     }
 
     private SlotResponse getSlotResponse(AvailabilitySlot newSlot) {
-        return mapper.map(newSlot,SlotResponse.class);
+        return mapper.map(newSlot, SlotResponse.class);
     }
 
     @GetMapping("{id}/slots")
-    public ResponseEntity<?> getAllSlotsById(@PathVariable Long id){
-        try{
-            List<AvailabilitySlot> slots = interviewerService.getAllAvailabilitySlotsByUserId(id);
-            List<SlotResponse> slotResponses = slots.stream()
-                    .map(this::getSlotResponse).toList();
-            return ResponseEntity.ok().body(new ApiResponse("Success!",slotResponses));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
-        }
+    public ResponseEntity<?> getAllSlotsById(@PathVariable Long id) {
+        List<AvailabilitySlot> slots = interviewerService.getAllAvailabilitySlotsByUserId(id);
+        List<SlotResponse> slotResponses = slots.stream()
+                .map(this::getSlotResponse).toList();
+        return ResponseEntity.ok().body(new ApiResponse("Success!", slotResponses));
     }
 
     @PutMapping("{userId}/updateSlots/{slotId}")
-    public ResponseEntity<?> updateSlot(@PathVariable Long userId, @PathVariable Long slotId,@RequestBody SlotRequest request){
-        try{
-            AvailabilitySlot updatedSlot = interviewerService.updateSLot(getSlotEntity(request),slotId,userId);
-            SlotResponse response = getSlotResponse(updatedSlot);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
-        }
+    public ResponseEntity<?> updateSlot(@PathVariable Long userId, @PathVariable Long slotId, @RequestBody SlotRequest request) {
+        AvailabilitySlot updatedSlot = interviewerService.updateSLot(getSlotEntity(request), slotId, userId);
+        SlotResponse response = getSlotResponse(updatedSlot);
+        return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
 
     @PostMapping("/accept/{id}")
-    public ResponseEntity<?> acceptInterview(@PathVariable Long id, @RequestParam boolean isAccepted){
-        try{
-            boolean isAcceptedI = interviewerService.acceptInterview(id,isAccepted);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",isAcceptedI));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
-        }
+    public ResponseEntity<?> acceptInterview(@PathVariable Long id, @RequestParam boolean isAccepted) {
+        boolean isAcceptedI = interviewerService.acceptInterview(id, isAccepted);
+        return ResponseEntity.ok().body(new ApiResponse("Success!", isAcceptedI));
     }
 
     @PostMapping("{userId}/feedback/{sessionId}")
-    public ResponseEntity<?> addFeedback(@PathVariable Long userId, @PathVariable Long sessionId, @RequestBody InterviewerFeedbackRequest request){
-        try{
-            InterviewerFeedback newFeedback = interviewerService.addFeedback(getIFeedbackEntity(request),sessionId,userId);
-            InterviewerFeedbackResponse response = getInterviewerFeedbackResponse(newFeedback);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
-        }
+    public ResponseEntity<?> addFeedback(@PathVariable Long userId, @PathVariable Long sessionId, @RequestBody InterviewerFeedbackRequest request) {
+        InterviewerFeedback newFeedback = interviewerService.addFeedback(getIFeedbackEntity(request), sessionId, userId);
+        InterviewerFeedbackResponse response = getInterviewerFeedbackResponse(newFeedback);
+        return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
 
     private InterviewerFeedback getIFeedbackEntity(InterviewerFeedbackRequest request) {
-        return mapper.map(request,InterviewerFeedback.class);
+        return mapper.map(request, InterviewerFeedback.class);
     }
 
     @GetMapping("/feedback/{id}")
-    public ResponseEntity<?> getFeedbackForInterviewer(@PathVariable Long id){
-        try{
-            StudentFeedback feedback = interviewerService.getFeedbackForInterviewer(id);
-            StudentFeedbackResponse response =getStudentFeedbackResponse(feedback);
-            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
-        }catch (Exception e){
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
-        }
+    public ResponseEntity<?> getFeedbackForInterviewer(@PathVariable Long id) {
+        StudentFeedback feedback = interviewerService.getFeedbackForInterviewer(id);
+        StudentFeedbackResponse response = getStudentFeedbackResponse(feedback);
+        return ResponseEntity.ok().body(new ApiResponse("Success!", response));
     }
 
     private StudentFeedbackResponse getStudentFeedbackResponse(StudentFeedback newFeedback) {
-        return mapper.map(newFeedback,StudentFeedbackResponse.class);
+        return mapper.map(newFeedback, StudentFeedbackResponse.class);
     }
 
     private InterviewerFeedbackResponse getInterviewerFeedbackResponse(InterviewerFeedback feedback) {
-        return mapper.map(feedback,InterviewerFeedbackResponse.class);
+        return mapper.map(feedback, InterviewerFeedbackResponse.class);
     }
-
-
 
 
 //    private final InterviewerService interviewerService;
@@ -233,7 +179,7 @@ public class InterviewerController {
 //            Long interviewerId = interviewerService.getInterviewerIdFromUser(user);
 //            SlotResponse response = interviewerService.addAvailabilitySlot(interviewerId,request);
 //            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
-//        }catch (AlreadyExistsException e){
+//        }catch (ResourceAlreadyException e){
 //            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(),null));
 //        } catch (RuntimeException e) {
 //            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
@@ -246,7 +192,7 @@ public class InterviewerController {
 //            Long interviewerId = interviewerService.getInterviewerIdFromUser(user);
 //            SlotResponse response = interviewerService.getAvailabilitySlots(interviewerId);
 //            return ResponseEntity.ok().body(new ApiResponse("Success!",response));
-//        }catch (AlreadyExistsException e){
+//        }catch (ResourceAlreadyException e){
 //            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
 //        } catch (RuntimeException e) {
 //            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));

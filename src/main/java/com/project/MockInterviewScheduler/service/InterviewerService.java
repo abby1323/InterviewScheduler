@@ -3,6 +3,7 @@ package com.project.MockInterviewScheduler.service;
 
 import com.project.MockInterviewScheduler.entity.*;
 import com.project.MockInterviewScheduler.enums.InterviewerStatus;
+import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
 import com.project.MockInterviewScheduler.repository.InterviewerRepository;
 import com.project.MockInterviewScheduler.repository.MatchRepository;
 import com.project.MockInterviewScheduler.service.interfaces.*;
@@ -43,7 +44,7 @@ public class InterviewerService implements InterviewerServiceInterface {
 
     @Override
     public Interviewer getInterviewerById(Long id) {
-        return interviewerRepository.findById(id).orElseThrow(() -> new RuntimeException("No such user exists"));
+        return interviewerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No such user exists"));
     }
 
     @Override
@@ -136,7 +137,7 @@ public class InterviewerService implements InterviewerServiceInterface {
 //    public SlotResponse addAvailabilitySlot(Long id, SlotRequest slotRequest){
 //        Interviewer interviewer = getInterviewerEntity(id);
 //        if (interviewer.getAvailabilitySlot()!=null)
-//            throw new AlreadyExistsException("Slot added already");
+//            throw new ResourceAlreadyException("Slot added already");
 //        AvailabilitySlot availabilitySlot = buildAvailabiltySlot(interviewer,slotRequest);
 //        return convertToSlotResponse(availabilitySlot);
 //    }

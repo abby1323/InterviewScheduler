@@ -4,6 +4,7 @@ import com.project.MockInterviewScheduler.entity.InterviewSession;
 import com.project.MockInterviewScheduler.entity.Interviewer;
 import com.project.MockInterviewScheduler.entity.InterviewerFeedback;
 import com.project.MockInterviewScheduler.entity.StudentFeedback;
+import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
 import com.project.MockInterviewScheduler.repository.InterviewSessionRepository;
 import com.project.MockInterviewScheduler.repository.InterviewerFeedbackRepository;
 import com.project.MockInterviewScheduler.repository.InterviewerRepository;
@@ -40,6 +41,6 @@ public class InterviewerFeedbackService implements InterviewerFeedbackServiceInt
     }
 
     private InterviewSession getInterviewById(Long interviewSessionId) {
-        return interviewSessionRepository.findById(interviewSessionId).orElseThrow(() -> new RuntimeException("No such interview exists"));
+        return interviewSessionRepository.findById(interviewSessionId).orElseThrow(() -> new ResourceNotFoundException("No such interview exists"));
     }
 }

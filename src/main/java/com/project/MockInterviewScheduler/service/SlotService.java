@@ -3,6 +3,7 @@ package com.project.MockInterviewScheduler.service;
 import com.project.MockInterviewScheduler.entity.AvailabilitySlot;
 import com.project.MockInterviewScheduler.entity.CustomUser;
 import com.project.MockInterviewScheduler.enums.SlotStatus;
+import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
 import com.project.MockInterviewScheduler.repository.SlotRepository;
 import com.project.MockInterviewScheduler.service.interfaces.SlotServiceInterface;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,6 @@ public class SlotService implements SlotServiceInterface {
 
     @Override
     public AvailabilitySlot getSlotById(Long slotId){
-        return slotRepository.findById(slotId).orElseThrow(() -> new RuntimeException("No such slot exists"));
+        return slotRepository.findById(slotId).orElseThrow(() -> new ResourceNotFoundException("No such slot exists"));
     }
 }
