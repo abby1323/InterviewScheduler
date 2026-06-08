@@ -1,3 +1,20 @@
+StudentRequest        // name, college, branch, targetRole, email, password
+InterviewerRequest    // name, company, designation, experienceInYears, email, password
+ExpertiseRequest      // domain, subDomains
+SlotRequest           // startTime, endTime, difficultyLevel
+FeedbackRequest (Student)     // rating, comments
+FeedbackRequest (Interviewer) // communication, strengths, improvements, recommendations
+
+StudentResponse       // id, name, college, branch, targetRole
+InterviewerResponse   // id, name, company, designation, experienceInYears, overallRating, status
+ExpertiseResponse     // id, domain, subDomains
+SlotResponse          // id, startTime, endTime, status, difficultyLevel
+MatchResponse         // id, studentId, interviewerId, slotId, status, createdAt
+InterviewSessionResponse  // id, matchId, scheduledAt, meetLink, status
+StudentFeedbackResponse   // id, rating, comments, submittedAt
+InterviewerFeedbackResponse // id, communication, strengths, improvements, recommendations, submittedAt
+ApiResponse           // already have this one
+
 
 "/api/v1"
 

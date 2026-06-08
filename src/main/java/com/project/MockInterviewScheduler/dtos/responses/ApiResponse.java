@@ -1,4 +1,4 @@
-package com.project.MockInterviewScheduler.dtos;
+package com.project.MockInterviewScheduler.dtos.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
