@@ -16,10 +16,10 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtService {
 
-    @Value("${spring.expiration-time}")
+    @Value("${jwt.expiration}")
     private long expirationTime;
 
-    @Value("${spring.jwt.secret}")
+    @Value("${jwt.secret}")
     private String jwtSecret ;
 
     public String extractUserName(String token){
