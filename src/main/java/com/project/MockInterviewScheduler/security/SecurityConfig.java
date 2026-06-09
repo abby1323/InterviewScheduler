@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth-> auth
                         // public URL
                                 .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/health").permitAll()
                         // student only
                         .requestMatchers("/api/v1/students/**").hasAuthority("STUDENT")
                         // interviewers only
