@@ -24,21 +24,18 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain setFilter(HttpSecurity http){
         return http
-                .csrf(csrf-> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ← must be here
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth-> auth
-                        // public URL
-                                .requestMatchers("/api/auth/**").permitAll()
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/health").permitAll()
-                        // student only
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/v1/students/**").hasAuthority("STUDENT")
-                        // interviewers only
                         .requestMatchers("/api/v1/interviewers/**").hasAuthority("INTERVIEWER")
-                        // placement-admin only
-                        .requestMatchers("/placement-admin/").hasAuthority("PLACEMENT_ADMIN")
-                                .anyRequest()
-                                .authenticated()
-                ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                        .requestMatchers("/placement-admin/**").hasAuthority("PLACEMENT_ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
