@@ -1,4 +1,4 @@
-# Mock Interview Scheduler
+# Mock Interview Scheduler [Live Demo](https://mockprepinterviewscheduler.netlify.app/)
 
 A full-stack interview scheduling platform that connects students with industry professionals for mock interviews. Built with a focus on scheduling integrity, secure access control, and automated matching.
 
