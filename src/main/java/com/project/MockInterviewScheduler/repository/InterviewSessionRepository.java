@@ -8,5 +8,9 @@ import java.util.Optional;
 
 @Repository
 public interface InterviewSessionRepository extends JpaRepository<InterviewSession,Long> {
-    Optional<InterviewSession> findByStudentId(Long id);
+    // traverse: InterviewSession → match → student → id
+    Optional<InterviewSession> findByMatchStudentId(Long studentId);
+
+    // traverse: InterviewSession → match → interviewer → id
+    Optional<InterviewSession> findByMatchInterviewerId(Long interviewerId);
 }

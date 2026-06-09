@@ -58,7 +58,7 @@ public class StudentController {
         return mapper.map(student, Student.class);
     }
 
-    @PutMapping("updateStudent/")
+    @PutMapping("/update")
     public ResponseEntity<?> updateStudent(@RequestBody StudentRequest student, @AuthenticationPrincipal CustomUser  user) {
         try {
             Student updatedStudent = studentService.updateStudent(getStudentEntity(student), user.getId());
@@ -69,17 +69,17 @@ public class StudentController {
         }
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<?> getAllStudents() {
-        try {
-            List<Student> students = studentService.getAllStudents();
-            List<StudentResponse> responses = students.stream()
-                    .map(this::getStudentResponse).toList();
-            return ResponseEntity.ok().body(new ApiResponse("Success!", responses));
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
-        }
-    }
+//    @GetMapping("/all")
+//    public ResponseEntity<?> getAllStudents() {
+//        try {
+//            List<Student> students = studentService.getAllStudents();
+//            List<StudentResponse> responses = students.stream()
+//                    .map(this::getStudentResponse).toList();
+//            return ResponseEntity.ok().body(new ApiResponse("Success!", responses));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
+//        }
+//    }
 
     @DeleteMapping("/delete/")
     public ResponseEntity<?> deleteStudent(@AuthenticationPrincipal CustomUser  user) {

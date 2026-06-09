@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class InterviewRequestResponse {
     private Long id;
-    private Long studentId;
+    private StudentResponse student;
     private String status;
 }

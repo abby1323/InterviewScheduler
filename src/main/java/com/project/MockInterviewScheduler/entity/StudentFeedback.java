@@ -17,9 +17,11 @@ public class StudentFeedback { // feedback provided by student
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne(mappedBy = "interview_session_id")
+    @OneToOne
+    @JoinColumn(name = "interview_session_id")
     private InterviewSession interviewSession;
-    @OneToOne(mappedBy = "user_id")
+    @OneToOne
+    @JoinColumn(name = "student_id")
     private Student student;
     private LocalDateTime submittedAt;
     private double rating;

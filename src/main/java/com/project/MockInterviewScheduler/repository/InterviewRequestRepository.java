@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface InterviewRequestRepository extends JpaRepository<InterviewRequest,Long> {
-    Optional<InterviewRequest> findByStudentId(Long studentId);
 
    List<InterviewRequest> findByStatus(InterviewRequestStatus interviewRequestStatus);
+
+   Optional<InterviewRequest> findByStudentIdAndStatus(Long userId, InterviewRequestStatus interviewRequestStatus);
 }

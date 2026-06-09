@@ -20,16 +20,17 @@ public class InterviewSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne(mappedBy = "match_id")
+    @OneToOne
+    @JoinColumn(name = "match_id")
     private Match match;
     private LocalDateTime scheduledAt;
     private InterviewStatus status;
     private String meetLink;
 
-    @OneToOne(mappedBy = "interview_session_id")
+    @OneToOne(mappedBy = "interviewSession")
     private StudentFeedback studentFeedback;
 
-    @OneToOne(mappedBy = "interview_session_id")
+    @OneToOne(mappedBy = "interviewSession")
     private InterviewerFeedback interviewerFeedback;
 
 }

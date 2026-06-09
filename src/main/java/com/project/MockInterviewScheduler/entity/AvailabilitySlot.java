@@ -25,9 +25,10 @@ public class AvailabilitySlot {
     @Enumerated(value = EnumType.STRING)
     private SlotStatus status;
     @ManyToOne
-    @JoinColumn(name = "custom_user_id")
+    @JoinColumn(name = "user_id")
     private CustomUser user;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "match_id")
     private Match match;
 
     public boolean overlapsWith(AvailabilitySlot other){

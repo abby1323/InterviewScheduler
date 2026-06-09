@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth-> auth
                         // public URL
-                                .requestMatchers("auth/**").permitAll()
+                                .requestMatchers("/api/auth/**").permitAll()
                         // student only
                         .requestMatchers("/api/v1/students/**").hasAuthority("STUDENT")
                         // interviewers only

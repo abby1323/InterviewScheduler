@@ -26,7 +26,7 @@ public class Match {
     @JoinColumn(name = "interviewer_id")
     private Interviewer interviewer;
     private LocalDateTime createdAt;
-    @OneToOne(mappedBy = "match_id")
+    @OneToOne(mappedBy = "match")
     private AvailabilitySlot slot;
     private MatchStatus status;
     private boolean hasStudentAccepted = false;

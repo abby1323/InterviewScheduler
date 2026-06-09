@@ -2,6 +2,7 @@ package com.project.MockInterviewScheduler.service;
 
 import com.project.MockInterviewScheduler.entity.CustomUser;
 import com.project.MockInterviewScheduler.entity.Expertise;
+import com.project.MockInterviewScheduler.repository.CustomUserRepository;
 import com.project.MockInterviewScheduler.repository.ExpertiseRepository;
 import com.project.MockInterviewScheduler.service.interfaces.ExpertiseServiceInterface;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.List;
 public class ExpertiseService implements ExpertiseServiceInterface {
 
     private final ExpertiseRepository expertiseRepository;
+    private final CustomUserRepository userRepository;
 
     @Override
     public Expertise addExpertise(Expertise expertise, CustomUser user){
@@ -22,6 +24,7 @@ public class ExpertiseService implements ExpertiseServiceInterface {
         expertise1.setDomain(expertise.getDomain());
         expertise1.setSubDomains(expertise.getSubDomains());
         user.getExpertise().add(expertise1);
+        userRepository.save(user);
         return expertiseRepository.save(expertise1);
     }
 

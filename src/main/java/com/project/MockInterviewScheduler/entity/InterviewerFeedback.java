@@ -17,9 +17,11 @@ public class InterviewerFeedback { //feedback given by interviewer
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne(mappedBy = "interview_session_id")
+    @OneToOne
+    @JoinColumn(name = "interview_session_id")
     private InterviewSession interviewSession;
-    @OneToOne(mappedBy = "user_id")
+    @OneToOne
+    @JoinColumn(name = "interviewer_id")
     private Interviewer interviewer;
     private String communication;
     private String strengths;

@@ -5,6 +5,6 @@ import lombok.Data;
 import java.util.List;
 @Data
 public class ExpertiseRequest {
-    private String domains;
+    private String domain;
     private List<String> subDomains;
 }

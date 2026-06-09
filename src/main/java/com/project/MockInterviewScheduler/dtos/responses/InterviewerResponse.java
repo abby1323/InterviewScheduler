@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class InterviewerResponse {
+    private Long id;
     private String name;
     private String company;
     private String broadExpertiseBranch;

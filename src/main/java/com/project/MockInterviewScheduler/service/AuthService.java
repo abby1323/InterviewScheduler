@@ -8,6 +8,7 @@ import com.project.MockInterviewScheduler.entity.Interviewer;
 import com.project.MockInterviewScheduler.entity.PlacementCoordinator;
 import com.project.MockInterviewScheduler.entity.Student;
 import com.project.MockInterviewScheduler.enums.InterviewerStatus;
+import com.project.MockInterviewScheduler.exceptions.InvalidRequestException;
 import com.project.MockInterviewScheduler.repository.CustomUserRepository;
 import com.project.MockInterviewScheduler.repository.InterviewerRepository;
 import com.project.MockInterviewScheduler.repository.PlacementCoordRepository;
@@ -50,42 +51,47 @@ public class AuthService implements AuthServiceInterface {
 
     @Override
     public UserResponse register(CreateUserRequest request) {
-        CustomUser user = new CustomUser();
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole());
-        user.setActive(true);
-        CustomUser savedUser = userRepository.save(user);
+        CustomUser savedUser;
 
 
         switch (request.getRole()){
             case STUDENT -> {
                 Student student = new Student();
+                student.setEmail(request.getEmail());
+                student.setPassword(passwordEncoder.encode(request.getPassword()));
+                student.setRole(request.getRole());
+                student.setActive(true);
                 student.setName(request.getName());
                 student.setCollege(request.getCollege());
                 student.setBranch(request.getBranch());
                 student.setTargetRole(request.getTargetRole());
 
-                student.setId(savedUser.getId());
-                studentRepository.save(student);
+                savedUser = studentRepository.save(student);
             }
             case INTERVIEWER -> {
                 Interviewer interviewer = new Interviewer();
+                interviewer.setEmail(request.getEmail());
+                interviewer.setPassword(passwordEncoder.encode(request.getPassword()));
+                interviewer.setRole(request.getRole());
+                interviewer.setActive(true);
                 interviewer.setName(request.getName());
                 interviewer.setCompany(request.getCompany());
                 interviewer.setExperienceInYears(request.getExperienceInYears());
                 interviewer.setBroadExpertiseBranch(request.getBroadExpertiseBranch());
                 interviewer.setStatus(InterviewerStatus.PENDING);
 
-                interviewer.setId(savedUser.getId());
-                interviewerRepository.save(interviewer);
+                savedUser = interviewerRepository.save(interviewer);
             }
             case PLACEMENT_ADMIN -> {
                 PlacementCoordinator admin = new PlacementCoordinator();
+                admin.setEmail(request.getEmail());
+                admin.setRole(request.getRole());
+                admin.setPassword(passwordEncoder.encode(request.getPassword()));
                 admin.setName(request.getName());
-                admin.setId(savedUser.getId());
-                placementCoordRepository.save(admin);
+                admin.setActive(true);
+                savedUser = placementCoordRepository.save(admin);
             }
+            default -> throw new InvalidRequestException("Invalid role");
         }
 
         String token = jwtService.generateToken(savedUser);

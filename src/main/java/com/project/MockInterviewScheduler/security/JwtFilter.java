@@ -36,6 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         user.getAuthorities()
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                System.out.println("AUTH SET FOR: " + tokenUsername + " role: " + user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
@@ -43,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private String extractToken(HttpServletRequest request) {
-        String header = request.getHeader("Authorisation");
+        String header = request.getHeader("Authorization");
         if(StringUtils.hasText(header) && header.startsWith("Bearer ")){
             return header.substring(7);
         }

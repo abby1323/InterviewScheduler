@@ -8,7 +8,7 @@ public interface InterviewRequestServiceInterface {
 
     public InterviewRequest addRequest(Long id);
     public InterviewRequest deleteInterviewRequest(Long id);
-    public InterviewRequest getInterviewRequestByUserId(Long userId);
+    public InterviewRequest getActiveRequestByUserId(Long userId);
     public List<InterviewRequest> getAllPendingRequests();
     InterviewRequest getRequestById(Long id);
 }

@@ -21,7 +21,7 @@ public class Expertise {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "custom_user_id")
+    @JoinColumn(name = "user_id")
     private CustomUser user;
     private String domain;
     @ElementCollection

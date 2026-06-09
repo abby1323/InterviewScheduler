@@ -4,6 +4,7 @@ import com.project.MockInterviewScheduler.entity.InterviewRequest;
 import com.project.MockInterviewScheduler.enums.InterviewRequestStatus;
 import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
 import com.project.MockInterviewScheduler.repository.InterviewRequestRepository;
+import com.project.MockInterviewScheduler.repository.StudentRepository;
 import com.project.MockInterviewScheduler.service.interfaces.InterviewRequestServiceInterface;
 import com.project.MockInterviewScheduler.service.interfaces.StudentServiceInterface;
 import lombok.RequiredArgsConstructor;
@@ -16,26 +17,28 @@ import java.util.List;
 public class InterviewRequestService implements InterviewRequestServiceInterface {
 
     private final InterviewRequestRepository interviewRequestRepository;
-    private final StudentServiceInterface studentService;
+    private final StudentRepository studentRepository; // ← replace StudentServiceInterface
 
     @Override
     public InterviewRequest addRequest(Long id) {
         InterviewRequest request = new InterviewRequest();
-        request.setStudent(studentService.getStudentById(id));
+        request.setStudent(studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found")));
         request.setStatus(InterviewRequestStatus.PENDING);
         return interviewRequestRepository.save(request);
     }
 
+
     @Override
     public InterviewRequest deleteInterviewRequest(Long id) {
-        InterviewRequest request = getInterviewRequestByUserId(id);
+        InterviewRequest request = getActiveRequestByUserId(id);
         request.setStatus(InterviewRequestStatus.CANCELLED);
         return interviewRequestRepository.save(request);
     }
 
     @Override
-    public InterviewRequest getInterviewRequestByUserId(Long userId) {
-        return interviewRequestRepository.findByStudentId(userId).orElseThrow(() -> new ResourceNotFoundException("No such user exists"));
+    public InterviewRequest getActiveRequestByUserId(Long userId) {
+        return interviewRequestRepository.findByStudentIdAndStatus(userId,InterviewRequestStatus.PENDING).orElseThrow(() -> new ResourceNotFoundException("No such user exists"));
     }
 
     @Override

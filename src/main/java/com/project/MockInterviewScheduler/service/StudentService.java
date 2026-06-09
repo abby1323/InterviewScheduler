@@ -3,8 +3,10 @@ package com.project.MockInterviewScheduler.service;
 
 import com.project.MockInterviewScheduler.dtos.responses.InterviewRequestResponse;
 import com.project.MockInterviewScheduler.entity.*;
+import com.project.MockInterviewScheduler.enums.InterviewRequestStatus;
 import com.project.MockInterviewScheduler.exceptions.InvalidRequestException;
 import com.project.MockInterviewScheduler.exceptions.ResourceNotFoundException;
+import com.project.MockInterviewScheduler.repository.InterviewRequestRepository;
 import com.project.MockInterviewScheduler.repository.MatchRepository;
 import com.project.MockInterviewScheduler.repository.StudentRepository;
 import com.project.MockInterviewScheduler.service.interfaces.*;
@@ -23,7 +25,7 @@ public class StudentService implements StudentServiceInterface {
     private final StudentFeedbackServiceInterface studentFeedbackService;
     private final InterviewerFeedbackServiceInterface interviewerFeedbackService;
     private final MatchRepository matchRepository;
-    private final InterviewRequestServiceInterface interviewRequestService;
+    private final InterviewRequestRepository interviewRequestRepository;
 
     @Override
     public Student addStudent(Student student) {
@@ -114,123 +116,22 @@ public class StudentService implements StudentServiceInterface {
 
     @Override
     public InterviewRequest makeInterviewRequest(Long userId) {
-        return interviewRequestService.addRequest(userId);
+        InterviewRequest request = new InterviewRequest();
+        request.setStudent(studentRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found")));
+        request.setStatus(InterviewRequestStatus.PENDING);
+        return interviewRequestRepository.save(request);
     }
 
     @Override
     public void deleteInterviewRequest(Long id, Long userId) {
         Student student = getStudentById(userId);
-        if(student.getInterviewRequest() == null){
-            throw new ResourceNotFoundException("No such request exists");
-        }
-        if(!student.getInterviewRequest().getId().equals(id)){
-            throw new ResourceNotFoundException("No such request exists");
-        }else {
-            interviewRequestService.deleteInterviewRequest(id);
-        }
+        InterviewRequest request= student.getInterviewRequest()
+                .stream()
+                .filter(r -> r.getId().equals(id))
+                .findFirst()
+                .orElseThrow(()->new ResourceNotFoundException("No such request exists"));
+         request.setStatus(InterviewRequestStatus.CANCELLED);
+         interviewRequestRepository.save(request);
     }
-
-
-//    private final StudentRepository studentRepository;
-//    private final InterviewRequestService interviewRequestService;
-//    private final InterviewSessionService interviewSessionService;
-//    private final AvailabiltySlotService slotService;
-//    private final ModelMapper mapper;
-//
-//    /* once a student profile is created through jwt login, we just set information we
-//    get from the user, nothing about interview request or sessions, those will be set
-//    once the admin approves, and then they will be shown on the student profile.
-//     */
-//
-//    // Student Profile Methods
-//
-//    public StudentProfileResponse getStudentProfile(Long id){
-//        return convertToStudentResponse(getStudentEntity(id));
-//    }
-//
-//    public StudentProfileResponse updateProfile(StudentProfileRequest request, Long id){
-//        Student updatedStudent = updateStudentEntity(getStudentEntity(id),request);
-//        return convertToStudentResponse(updatedStudent);
-//    }
-//
-//    /* While creating Interview Request, we will set the status as PENDING,
-//    and not set any Match. This status and the match will later be set by the
-//    admin
-//     */
-//
-//    // Interview Request Methods
-//
-//    public InterviewRequestResponse createInterviewRequest(Long studentId, CreateInterviewRequest createRequest) {
-//        Student student = getStudentEntity(studentId);
-//        if(student.getInterviewRequest()!=null)
-//            throw new ResourceAlreadyException("interview request already created");
-//        InterviewRequest interviewRequest = interviewRequestService.addInterviewRequest(createRequest,student);
-//        student.setInterviewRequest(interviewRequest);
-//        return convertInterviewRequestToResponse(interviewRequest);
-//    }
-//
-//    public InterviewRequestResponse getInterviewRequest(Long studentId){
-//        Student student = getStudentEntity(studentId);
-//        return convertInterviewRequestToResponse(student.getInterviewRequest());
-//    }
-//
-//    // Availability Slot Methods
-//    public SlotResponse addAvailabilitySlot(Long id, SlotRequest slotRequest){
-//        Student student = getStudentEntity(id);
-//        if (student.getAvailabilitySlot()!=null)
-//            throw new ResourceAlreadyException("Slot added already");
-//        AvailabilitySlot availabilitySlot = slotService.addStudentAvailSlot(student,slotRequest);
-//        return convertToSlotResponse(availabilitySlot);
-//    }
-//
-//    public SlotResponse getAvailabiltySlots(Long id){
-//        Student student = getStudentEntity(id);
-//        StudentAvailSlot slot = student.getAvailabilitySlot();
-//        return convertToSlotResponse(slot);
-//    }
-//
-//    // cancel interview
-//
-//    public void cancelInterview(Long sessionId){
-//        interviewSessionService.cancelInterview(sessionId);
-//    }
-//
-//    // helper methods
-//
-//    private SlotResponse convertToSlotResponse(AvailabilitySlot availabilitySlot) {
-//        return mapper.map(availabilitySlot,SlotResponse.class);
-//    }
-//
-//    public  Student getStudentEntity(Long id){
-//        //id coming from @AuthenticationPrincipal in Controller set in Security Context
-//        return studentRepository.findById(id)
-//                .orElseThrow(() -> new UsernameNotFoundException("Student not found"));
-//    }
-//
-//    public InterviewRequestResponse convertInterviewRequestToResponse(InterviewRequest interviewRequest) {
-//        return mapper.map(interviewRequest,InterviewRequestResponse.class);
-//    }
-//
-//    private Student updateStudentEntity(Student student,StudentProfileRequest request) {
-//        student.setName(request.getName());
-//        student.setCollege(request.getCollege());
-//        student.setBranch(request.getBranch());
-//        student.setTargetRole(request.getTargetRole());
-//        return studentRepository.save(student);
-//    }
-//
-//    public StudentProfileResponse convertToStudentResponse(Student student){
-//        return mapper.map(student,StudentProfileResponse.class);
-//    }
-//
-//    public Long getStudentIdFromUser(CustomUser user){
-//        Student student = studentRepository.findByUserId(user.getId())
-//                .orElseThrow(() -> new UsernameNotFoundException("Not found"));
-//        return student.getId();
-//    }
-//
-//
-//    public void updateRating(double rating, Long id) {
-//        getStudentEntity(id).setOverallRating(rating);
-//    }
 }

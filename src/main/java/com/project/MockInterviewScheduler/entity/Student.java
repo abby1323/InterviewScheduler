@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -20,8 +22,8 @@ public class Student extends CustomUser{
     private String targetRole;
 
     // each student can create one request at a time
-    @OneToOne
-    private InterviewRequest interviewRequest;
+    @OneToMany(mappedBy = "student")
+    private List<InterviewRequest> interviewRequest;
 
 
 
